@@ -1,7 +1,14 @@
-clear
-cd /Users/stewart/Projects/damage/GIV
-%X=load('preAdapterMetrics.noContext.GIV.24Apr2017.mat')
-X=load_tsv('/Volumes/GoogleDrive/My Drive/Comment_to_Science_damage/matlab/preAdapterMetrics.noContext.GIV.24Apr2017.tsv')
+function [out]=Figure1(A)
+addpath([A '/matlab'])
+%   Figure1(A) generates Figure 1 of the comment to "DNA damage is a 
+%   pervasive cause of sequencing errors, directly confounding variant 
+%   identification.", Science 355, 752?756 (2017)
+%
+%   loads tables from git@github.com:broadinstitute/damage.git
+%
+%   Copyright 2018 Chip Stewart,  The Broad Institute 
+
+X=load_tsv('preAdapterMetrics.noContext.GIV.24Apr2017.tsv')
 X=trimStruct(X,strfindk(X.sample_id,'PAAD','v'))
 X.QSCORE=-10*log10(X.ERROR_RATE)
 k=find(ismember(X.REFALT,'GT'))
@@ -13,13 +20,6 @@ bot=X.CON_ALT_BASES./(X.CON_ALT_BASES+X.CON_REF_BASES);
 
 X.picard_GIV=top./bot;
 
-%null_error_rate=bot/1.5
-%null_error_rate=(X.PRO_ALT_BASES+X.CON_ALT_BASES)./(X.PRO_ALT_BASES+X.PRO_REF_BASES+X.CON_ALT_BASES+X.CON_REF_BASES);
-
-%plot(X.QSCORE(k),null_error_rate(k),'.')
-
-%median_null_error_rate=median(null_error_rate(k))
-%mean_null_error_rate=mean(null_error_rate(k))
 median_null_error_rate=median(bot(k))/1.25
 mean_null_error_rate=mean(bot(k))
 
@@ -46,8 +46,6 @@ xlabel('oxoQ')
 ylabel({'GIV_{G\_T} reported'},'interpreter','tex')
 grid on;
 [h,icons,plots,legend_text]=legend(SETS)
-%keyboard
-%set(h,'Position', (get(h,'Position')+[0.025,0.025,0, 0]).*[1 1 0.25 0.75]);
 
 NSETS=length(SETS)
 kl=findobj(icons,'type','Line')
@@ -61,8 +59,6 @@ end
 
 x=20:60;
 y=1+10.^(-x/10)/median_null_error_rate;
-%line(x,y,'linestyle','--','color',0.75*[1 1 1],'linewidth',3)
-%
 text(-0.2,1.05,'A','units','normalized','fontsize',18)
 
 
@@ -84,14 +80,10 @@ end
 
 hold off
 xlabel('oxoQ')
-%ylabel({'GIV_G_T corrected'})
 ylabel({'GIV_{G\_T} corrected'},'interpreter','tex')
 
-%line(x,y,'linestyle','--','color',0.75*[1 1 1],'linewidth',3)
 
 [h,icons,plots,legend_text]=legend(SETS)
-%keyboard
-%set(h,'Position', (get(h,'Position')+[0.025,0.025,0, 0]).*[1 1 0.25 0.75]);
 
 NSETS=length(SETS)
 kl=findobj(icons,'type','Line')
@@ -107,15 +99,12 @@ grid on;
 
 text(-0.2,1.05,'B','units','normalized','fontsize',18)
 
-cd /Users/stewart/Projects/damage/GIV
-cd('/Volumes/GoogleDrive/My Drive/Comment_to_Science_damage/matlab/')
 
 set(gcf,'Position',[10 300 1200 550])
 
 %
 subplot(2,3,3)
-%Q=load('/Users/stewart/Projects/damage/baseQ/data/bqHisto.11Apr2017.mat')
-Q=load('/Volumes/GoogleDrive/My Drive/Cancer/damage/baseQ/bqHisto.11Apr2017.mat')
+Q=load('bqHisto.11Apr2017.mat')
 
 [u,k]=sort(Q.oxoQ)
 Q=trimStruct(Q,k)
@@ -155,7 +144,6 @@ subplot(2,3,6)
 k=find(ismember(X.REFALT,'GT'))
 x=X.GIV0_TOT(k)./X.GIV_TOT(k); x(x>1)=1;
 semilogx(X.GIV(k),x,'ko','markersize',3); 
-%xlabel('GIV_G_T corrected')
 xlabel({'GIV_{G\_T} corrected '},'interpreter','tex')
 ylabel('fraction of bases selected')
 xlim([0.9 40])
@@ -172,9 +160,8 @@ i=1
 for i=1:2
     if (i==1), v='revised'; panel='E'; label ='corrected'; ipanel=5; end
     if (i==2), v='default'; panel='D'; label ='reported'; ipanel=4; end
-
-    %D=load(['/Users/stewart/Projects/damage/GIV/data_' v '/estimate_damage_location_context_for_R.14Apr2017.mat'])
-    D=load(['/Volumes/GoogleDrive/My Drive/Comment_to_Science_damage/matlab/data_' v '/estimate_damage_location_context_for_R.14Apr2017.mat'])
+    if exist(['data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'],'file'), continue; end
+    D=load(['data_' v '/estimate_damage_location_context_for_R.14Apr2017.mat'])
 
     
     D.DERROR_RATE =  (D.PRO_ALT_BASES-D.CON_ALT_BASES)./(D.PRO_ALT_BASES+D.CON_ALT_BASES + D.PRO_REF_BASES+D.CON_REF_BASES);
@@ -194,8 +181,6 @@ for i=1:2
     S0=unique(X.sample_id)
     D=trimStruct(D,ismember(D.sample,S0))
     
-    %XY=plotLegoFromDetailMetrics(D,'',P)
-    
     % OXOG <30
     k=find(ismember(X.REF_BASE,'G').*ismember(X.ALT_BASE,'T').*(abs(X.QSCORE)<=30))
     X1=trimStruct(X,k)
@@ -206,27 +191,20 @@ for i=1:2
         DX=trimStruct(D1,kx)
         DX.QSCORE
     end
-    %save(['/Users/stewart/Projects/damage/GIV/data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'],'-struct','D1')
-    save(['/Volumes/GoogleDrive/My Drive/Comment_to_Science_damage/matlab/data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'],'-struct','D1') 
+    save(['data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'],'-struct','D1') 
         
     if(i==1),D0=D1; end
 end
 
 %%
-addpath /Users/stewart/CancerGenomeAnalysis/trunk/matlab/mike/
 P=[]
-% P.log=true;
-% P.baseline=1e-8;
-% P.ztick=10.^[-8:2:0];
-% P.zmax=0.01;
 P.PROCON='CON';
 
 
 v='default'; panel='D'; label ='reported'; ipanel=4;
 subplot(2,3,ipanel)
 
-%D=load(['/Users/stewart/Projects/damage/GIV/data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'])
-D=load(['/Volumes/GoogleDrive/My Drive/Comment_to_Science_damage/matlab/data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'])
+D=load(['data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'])
 % over all 1235 
 [XY,XY1,hb,hl,hp,h1]=plotLegoFromDetailMetrics1(D,P)
 text(hb,-0.1,1.05,'D','units','normalized','fontsize',18)
@@ -234,8 +212,7 @@ text(hb,-0.1,1.05,'D','units','normalized','fontsize',18)
 v='revised'; panel='E'; label ='corrected'; ipanel=5;
 subplot(2,3,ipanel)
 
-%D=load(['/Users/stewart/Projects/damage/GIV/data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'])
-D=load(['/Volumes/GoogleDrive/My Drive/Comment_to_Science_damage/matlab/data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'])
+D=load(['data_' v '/estimate_damage_location_context_for_R.oxoQ.le.30.8Jan2018.mat'])
 if (0)
     kx=find(ismember(D.REF_BASE,'G').*ismember(D.ALT_BASE,'T'))
     DX1=trimStruct(D,kx)
@@ -246,14 +223,10 @@ end
 [XY,XY1,hb,hl,hp,h1]=plotLegoFromDetailMetrics1(D,P)
 text(hb,-0.1,1.05,'E','units','normalized','fontsize',18)
 
-fplt=['/Volumes/GoogleDrive/My Drive/Comment_to_Science_damage/matlab/plots/Fig1.' TODAY ]
+fplt=['plots/Fig1.' TODAY ]
 saveas(gcf,[fplt '.png'],'png')
-%saveas(gcf,[fplt '.eps'],'epsc')
-%saveas(gcf,[fplt '.svg'],'svg')
 print([fplt '.eps'],'-depsc','-painters')
 print([fplt '.svg'],'-dsvg','-painters')
-%saveas(gcf,[fplt '.ps'],'psc2')
-%saveas(gcf,[fplt '.pdf'],'pdf')
 
 
 %%
@@ -269,11 +242,9 @@ REFALTLAB={'G>T','C>T','T>A','G>C','A>C' 'T>C'}
 REFALT=regexprep(REFALTLAB,'>','')
 X=trimStruct(X,ismember(X.REFALT,REFALT))
 SETS=sort(unique(X.SET))
-T=load_tsv('/Users/stewart/Projects/damage/GDC/GDC.TCGA.bams.name.sequencing_date.24Apr2017.tsv')
+T=load_tsv('GDC.TCGA.bams.name.sequencing_date.24Apr2017.tsv')
 T.id0=T.id;
 T.proj=mysubstring(T.id,1,4);
-tab(T.proj)
-%T=trimStruct(T,ismember(T.proj,'TCGA'))
 T.id=mysubstring(T.id,6,10);
 T.id=regexprep(T.id,'-01$','-TP')
 T.id=regexprep(T.id,'-11$','-NT')
@@ -283,17 +254,12 @@ T.id=regexprep(T.id,'-03$','-TB')
 T.short_sample_code=mysubstring(T.id,9,2)
 T=trimStruct(T,ismember(T.short_sample_code,{'TB','TM','TP'}))
 [i m]=ismember(X.id,T.id)
-tab(i)
+%tab(i)
 X.GDC_T1=NaN*X.GIV;
 X.GDC_T2=NaN*X.GIV;
 X.GDC_T1(i)=T.t1(m(i));
 X.GDC_T2(i)=T.t2(m(i));
 plot(X.bam_start_date,X.GDC_T1,'+')
-%myhist(X.bam_start_date-X.GDC_T1,-1000:3000,'log')
-
-%REFALT=unique(X.REFALT)
-%k=find(cellfun(@length,regexp(REFALT,'.T|.G','match'))>0)
-%REFALT=REFALT(k)
 X1=trimStruct(X,ismember(X.REFALT,'GT'))
 X1=rmfield(X1,{'CONTEXT','LIBRARY'})
 X1.BAM_START_DATE=repmat({''},size(X1.SAMPLE_ALIAS))
@@ -327,6 +293,4 @@ for i=1:length(REFALT)
 end
 X1=rmfield(X1,{'REF_BASE','ALT_BASE','PRO_REF_BASES','PRO_ALT_BASES','CON_REF_BASES','CON_ALT_BASES','ERROR_RATE','QSCORE','sample_id','id','REFALT','GIV','GIV0','GIV0_TOT','GIV_TOT','GIV_FAM','picard_GIV'})
 X1=rmfield(X1,{'bam_start_date','bam_end_date','GDC_T1','GDC_T2'})
-printStruct(X1,-1,['~/GoogleDrive/Comment_to_Science_damage/matlab/TableS1.Picard.GIV.' TODAY '.tsv'])
-
-%%
+printStruct(X1,-1,['TableS1.Picard.GIV.' TODAY '.tsv'])
