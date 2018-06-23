@@ -1,6 +1,6 @@
-# damage
+# Damage
 
-Scripts to generate Figures and statistics for comment on "DNA damage is a pervasive cause of sequencing errors, directly confounding variant identification.", Science 355, 752–756 (2017)
+Scripts to generate figures and statistics for comment on "DNA damage is a pervasive cause of sequencing errors, directly confounding variant identification.", Science 355, 752–756 (2017)
 
 Matlab version: 9.2.0.556344 (R2017a)
 
