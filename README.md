@@ -9,7 +9,7 @@ Matlab files (run using Matlab version: 9.2.0.556344 (R2017a))
 
 * Figure1.m:  script to generate Figure 1
 
-* Figure2.m:  script to generate Figure 1
+* Figure2.m:  script to generate Figure 2
 
 * matlab/*.m : custom functions used by Figure1.m or Figure2.m
  
