@@ -1,4 +1,4 @@
-function [out]=Figure1(A)
+function Figure1(A)
 addpath([A '/matlab'])
 %   Figure1(A) generates Figure 1 of the comment to "DNA damage is a 
 %   pervasive cause of sequencing errors, directly confounding variant 

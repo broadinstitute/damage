@@ -1,13 +1,21 @@
+function Figure1(A)
+%   Figure2(A) generates Figure 2 of the comment to "DNA damage is a 
+%   pervasive cause of sequencing errors, directly confounding variant 
+%   identification.", Science 355, 752?756 (2017)
+%
+%   loads tables from git@github.com:broadinstitute/damage.git
+%
+%   Copyright 2018 Chip Stewart,  The Broad Institute 
 
-clear
-rmpath /Users/stewart/CancerGenomeAnalysis/trunk/matlab/mike
-cd ~/GoogleDrive/Comment_to_Science_damage/data/
-X1=load('~/GoogleDrive/Comment_to_Science_damage/data/TCGA.1933.error_rate.29Oct2017.mat')
+addpath([A '/matlab'])
+%rmpath /Users/stewart/CancerGenomeAnalysis/trunk/matlab/mike
+%cd ~/GoogleDrive/Comment_to_Science_damage/data/
+X1=load('TCGA.1933.error_rate.29Oct2017.mat')
 %printStruct(X1,-1,'~/GoogleDrive/Comment_to_Science_damage/data/TCGA.1933.error_rate.30Oct2017.txt')
 
 X1.error_rate=X1.total_alt_bases./X1.total_bases;
 [q,k]=min(X1.error_rate)
-look(X1,k)
+%look(X1,k)
 
 
 
@@ -53,12 +61,12 @@ text(-0.29,1.1,'B','Units', 'Normalized', 'VerticalAlignment', 'Top','fontsize',
 set(gcf,'Position',[100 200 1100 600])
 
 % D
-cd /Users/stewart/GoogleDrive/Comment_to_Science_damage/data
-I = imread('/Users/stewart/GoogleDrive/Comment_to_Science_damage/data/Chen.Fig4E.png');
+%cd /Users/stewart/GoogleDrive/Comment_to_Science_damage/data
+I = imread('Chen.Fig4E.png');
 
 subplot(2,3,2)
 %imshow(I)
-p=double(I(:,:,1)-I(:,:,2)-I(:,:,3))./sum(I,3)
+p=double(I(:,:,1)-I(:,:,2)-I(:,:,3))./sum(I,3);
 
 z1=flipud(1-(p>0.05));
 %imagesc(z1)
@@ -81,7 +89,7 @@ ylabel({'percentage of estimated',' false positive somatic variants'})
 text(-0.29,1.05,'D','Units', 'Normalized', 'VerticalAlignment', 'Top','fontsize',18)
 
 % E
-P=load_tsv('/Users/stewart/GoogleDrive/Cancer/damage/mc3/mc3.oxoG.damage.GIV.FDR.prior.pairs.txt')
+P=load_tsv('mc3.oxoG.damage.GIV.FDR.prior.pairs.txt')
 
 SET=flipud(unique(P.SET)); n=length(SET)
 
@@ -174,7 +182,7 @@ ylim([0 100])
 text(-0.29,1.1,'G','Units', 'Normalized', 'VerticalAlignment', 'Top','fontsize',18)
 
 % plot
-fplt=['~/GoogleDrive/Comment_to_Science_damage/matlab/plots/Fig2.' TODAY ]
+fplt=['plots/Fig2.' TODAY ]
 saveas(gcf,[fplt '.png'],'png')
 print([fplt '.png'],'-dpng')
 print([fplt '.eps'],'-depsc','-painters')
