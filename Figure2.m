@@ -7,17 +7,10 @@ function Figure1(A)
 %
 %   Copyright 2018 Chip Stewart,  The Broad Institute 
 
-addpath([A '/matlab'])
-%rmpath /Users/stewart/CancerGenomeAnalysis/trunk/matlab/mike
-%cd ~/GoogleDrive/Comment_to_Science_damage/data/
 X1=load('TCGA.1933.error_rate.29Oct2017.mat')
-%printStruct(X1,-1,'~/GoogleDrive/Comment_to_Science_damage/data/TCGA.1933.error_rate.30Oct2017.txt')
 
 X1.error_rate=X1.total_alt_bases./X1.total_bases;
 [q,k]=min(X1.error_rate)
-%look(X1,k)
-
-
 
 subplot('position',[0.1 0.1 0.23 0.4])
 plot(X1.GIV,X1.oxoG_alt_bases./X1.total_bases,'rx')
@@ -39,7 +32,6 @@ xb=0:35
 nb=hist(X1.GIV,xb)
 h=bar(xb,nb,'hist')
 xlim([0 35])
-%set(gca,'yscale','log')
 set(gca,'xticklabel',[])
 set(h,'FaceColor',0.5*[1 1 1])
 h.Vertices(h.Vertices==0)=0.9
@@ -61,18 +53,14 @@ text(-0.29,1.1,'B','Units', 'Normalized', 'VerticalAlignment', 'Top','fontsize',
 set(gcf,'Position',[100 200 1100 600])
 
 % D
-%cd /Users/stewart/GoogleDrive/Comment_to_Science_damage/data
 I = imread('Chen.Fig4E.png');
 
 subplot(2,3,2)
-%imshow(I)
 p=double(I(:,:,1)-I(:,:,2)-I(:,:,3))./sum(I,3);
 
 z1=flipud(1-(p>0.05));
-%imagesc(z1)
 d=size(z1)
 s0=[1 d(1) 1 d(2)]
-%s1=[0 100 1 7.8]
 y0=(1:d(1))
 y1=(y0-1)*(100/(d(1)-1))
 x0=(1:d(2))
@@ -83,9 +71,6 @@ imagesc(x1,y1,z)
 axis xy
 h=xlabel('GIV_{G\_T}'); set(h,'interpreter','tex')
 ylabel({'percentage of estimated',' false positive somatic variants'})
-%set(gcf,'position',[50 50 1000 1200])
-
-%text(0.02,0.98,'A','Units', 'Normalized', 'VerticalAlignment', 'Top','fontsize',18)
 text(-0.29,1.05,'D','Units', 'Normalized', 'VerticalAlignment', 'Top','fontsize',18)
 
 % E
@@ -109,16 +94,12 @@ grid on
 xlim([1 7.5])
 ylim([0 100])
 ylabel('MuTect FDR (%) BEFORE filter .')
-%xlabel({'GIV_G_T corrected'},'interpreter','none')
 xlabel({'GIV_{G\_T} corrected'},'interpreter','tex')
 x = [1 7.5 7.5 1 1];
 y = [0 0 100 100 0];
 p=patch(x,y,0.7*[1 1 1] );
 set(p,'FaceAlpha',0.5);
 set(p,'EdgeColor','none');
-%r = rectangle('Position',[1 0 7.5 100]')
-%r.EdgeColor=[0 0 0]
-%r.FaceColor=0.8*[1 1 1]
 hold on;
 plot(P.GIV_GT_QUALITYSCORE20,100*P.fdr_part_posterior,'ro','markersize',4,'markerfacecolor','r')
 hold off
@@ -138,7 +119,6 @@ for i=2:n
 end
 hold off
 ylabel('MuTect FDR (%) BEFORE filter ')
-%xlabel({'GIV_G_T  corrected'},'interpreter','none')
 xlabel({'GIV_{G\_T} corrected'},'interpreter','tex')
 grid on;
 [h,icons,plots,legend_text]=legend(SET,'location','SE')
@@ -187,8 +167,5 @@ saveas(gcf,[fplt '.png'],'png')
 print([fplt '.png'],'-dpng')
 print([fplt '.eps'],'-depsc','-painters')
 print([fplt '.svg'],'-dsvg','-painters')
-
-%saveas(gcf,[fplt '.eps'],'epsc')
-%saveas(gcf,[fplt '.svg'],'svg')
 
 
